@@ -6,6 +6,7 @@ from threading import Lock
 
 from pymongo.connection import Connection
 from pymongo.master_slave_connection import MasterSlaveConnection
+#import required for db authentication
 from pymongo import database
 
 from .utils import parse_uri
@@ -77,12 +78,12 @@ class DataStore(object):
                         master = Connection(str(self.master_args[0]['host']), int(self.master_args[0]['port']),
                                             pool_size=int(self.master_args[0]['query'].get('pool_size','16')),
                                             network_timeout=network_timeout)
-                        ##authenticating  when the db requires it to be done.
+                        ###authenticating  when the db requires it to be done.
                         if self.master_args[0].get('username') and self.master_args[0].get('password'):
                             db = database.Database(master, self.master_args[0]['path'][1:])
                             db.authenticate(self.master_args[0]['username'], 
                                             self.master_args[0]['password'])
-                        ##
+                        ###
                     except:
                         if self.slave_args:
                             log.exception('Cannot connect to master: %s will use slave: %s' % (self.master_args, self.slave_args))
